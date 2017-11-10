@@ -3,6 +3,11 @@ var mongoose = require('mongoose');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var bluebird = require('bluebird');
+
+var crypto = require('crypto'),
+    algorithm = 'aes-256-ctr',
+    password = 'd6F3Efeq';
+
 var app = express ();
 
 // use bluebird as default promise library
@@ -113,7 +118,7 @@ app.post('/registrarUsuario', function (req, res) {
       usuario: usuario,
       correo: correo,
       terminos: terminos,
-      contrasena : contrasena
+      contrasena : encrypt(contrasena)
   });
 
     var error = ";"
@@ -141,7 +146,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 app.post('/loguearse', function (req, res) {
 
         var correo = req.body.correo;
-        var contrasena = req.body.contrasena;
+        var contrasena = encrypt(req.body.contrasena);
 
         console.log(correo);
         console.log(contrasena);
@@ -198,4 +203,18 @@ exports.closeServer = function(){
   db.disconnect();
   console.log('bye');
 };
-//JUAN PABLO es mi compai
+
+
+function encrypt(text){
+    var cipher = crypto.createCipher(algorithm,password)
+    var crypted = cipher.update(text,'utf8','hex')
+    crypted += cipher.final('hex');
+    return crypted;
+}
+
+function decrypt(text){
+    var decipher = crypto.createDecipher(algorithm,password)
+    var dec = decipher.update(text,'hex','utf8')
+    dec += decipher.final('utf8');
+    return dec;
+}

@@ -12,6 +12,7 @@
     "connect": "^3.6.5",
     "connect-memcached": "^0.2.0",
     "cookie-parser": "^1.4.3",
+    "crypto": "^1.0.1",
     "dateformat": "^3.0.2",
     "express": "latest",
     "express-session": "^1.15.6",

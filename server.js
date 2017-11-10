@@ -58,6 +58,7 @@ app.get('/usuarioMobil', function(req, res) {
 })
 
 app.post('/usuarioMobil', function (req, res) {
+    var sessData = req.session;
   //console.log('Este es el nombre de usuario: ' + req.query.usuario);
   console.log('Este es el tipo de emergencia: ' + req.query.tipo_emergencia);
   console.log('Esta es la ubicacion: ' + req.query.ubicacion);

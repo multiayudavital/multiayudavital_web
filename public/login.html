@@ -10,7 +10,9 @@
 
         $(document).ready(function () {
 
-            var url = 'localhost:3000loguearse';
+            var servidor = 'http://localhost:3000'
+
+            var url = `${servidor}/loguearse`;
 
             $("#ingresarBtn").click(function () {
                 submit();
@@ -23,22 +25,19 @@
                 if($("#correo").val() == '' || $("#contrasena").val() == ''){
                     $('#usuarioModal').modal('show');
                 }else{
-
-                    $('#myModal').modal('show');
-
                     $.ajax({
                         method: "POST",
                         url: url,
                         data: { correo: correo, contrasena: contrasena }
                     }).done(function( msg ) {
-                            alert( "Data Saved: " + msg );
-                        $('#myModal').modal('hide');
+
+                        alert( "Data Saved: " + JSON.stringify(msg) );
+                        if(msg.error){
+                        }else{
+                            window.open(`${servidor}/usuarioMobil.html`,"_self")
+                        }
                     });
-                    //window.open("www.youraddress.com","_self")
-
                 }
-
-
             }
         });
 

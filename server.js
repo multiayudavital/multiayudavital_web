@@ -65,7 +65,7 @@ app.post('/usuarioMobil', function (req, res) {
   var fecha = new Date().toISOString().
   replace(/T/, ' ').      // replace T with a space
   replace(/\..+/, '');
-  var usuario = req.query.usuario;
+  var usuario = sessData.usuario.nombre;
   var tipo_emergencia = req.query.tipo_emergencia;
   var ubicacion = req.query.ubicacion;
 

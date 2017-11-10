@@ -10,38 +10,32 @@
 
         $(document).ready(function () {
 
-            navigator.geolocation.getCurrentPosition(success, error, options);
+            var url = 'http://localhost:3000/loguearse';
 
-            var options = {
-                enableHighAccuracy: true,
-                timeout: 30000,
-                maximumAge: 0
-            };
-
-            var ubicacion = '';
-            var tipo_emergencia = '';
-
-            var url = 'https://multiayudavital.herokuapp.com/usuarioMobil?';
-            //var url = 'http://localhost:3000/usuarioMobil?';
-
-            $("#gravisima").click(function () {
-                tipo_emergencia = 'tipo_emergencia=gravisima';
+            $("#ingresarBtn").click(function () {
                 submit();
             });
 
-
-
             function submit(){
-                if($("#usuario").val() == ''){
-                    $('#usiarioModal').modal('show');
-                }else{
-                    var usuario =$("#usuario").val();
+                var correo = $("#correo").val();
+                var contrasena = $("#contrasena").val();
 
-                    url = `${url}&usuario=${usuario}&${tipo_emergencia}&${ubicacion}`;
-                    console.log(url);
-                    $("#tmp").attr("action",url);
-                    $("#tmp").submit();
+                if($("#correo").val() == '' || $("#contrasena").val() == ''){
+                    $('#usuarioModal').modal('show');
+                }else{
+
                     $('#myModal').modal('show');
+
+                    $.ajax({
+                        method: "POST",
+                        url: url,
+                        data: { correo: correo, contrasena: contrasena }
+                    }).done(function( msg ) {
+                            alert( "Data Saved: " + msg );
+                        $('#myModal').modal('hide');
+                    });
+                    //window.open("www.youraddress.com","_self")
+
                 }
 
 
@@ -104,18 +98,20 @@
 </div>
 <BR/>
 <div class="well" style="max-width: 400px; margin: 0px auto 10px;">
+
+    <h2>Ingreso al Sistema</h2>
     <form id="tmp" method="post"></form>
     <form id="formUsuario">
         <div class="container">
 
-                <div class="form-group"><label for="formBasicText" class="control-label">Nombre
-                    completo</label><input id="usuario" type="text" placeholder="ingrese nombre" id="formBasicText"
+                <div class="form-group"><label for="formBasicText" class="control-label">Correo
+                    </label><input id="correo" type="text" placeholder="ingrese correo" id="formBasicText"
                        class="form-control"></div>
                <div class="form-group"><label for="formBasicText" class="control-label">Contraseña
-               </label><input id="usuario" type="password" placeholder="ingrese contaseña" id="formBasicText"
+               </label><input id="contrasena" type="password" placeholder="ingrese contaseña" id="formBasicText"
                                           class="form-control"></div>
 
-              <button id="usuario" type="button" class="btn btn-lg btn-warning btn-block">ingresar</button>
+              <button id="ingresarBtn" type="button" class="btn btn-lg btn-warning btn-block">ingresar</button>
 
         </div>
     </form>
@@ -139,7 +135,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="usiarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="usuarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -149,7 +145,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                Favor ingresar nombre Paciente
+                Favor ingresar correo y constraseña
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" data-dismiss="modal" aria-label="Close">OK</button>

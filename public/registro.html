@@ -120,7 +120,19 @@
                    <div class="form-group"><label for="formBasicText" class="control-label">contaseña
                    </label><input id="usuario" type="password" placeholder="ingrese contraseña" id="formBasicText"
                                               class="form-control"></div>
+
+                    <div class="form-group col-md-4">
+                        <label for="inputState">Role</label>
+                        <select id="inputState" class="form-control">
+                            <option selected>Seleccione...</option>
+                            <option value="admin">Admin</option>
+                            <option value="usuario">Usuario</option>
+                            <option value="para">Paramedico</option>
+                            <option>...</option>
+                        </select>
+                    </div>
                   <input type="checkbox" name="terminosCondiciones">acepto terminos y condiciones</input>
+
                 <a onclick="window.location = 'login.html'" target="_blank" href="terminos.html">terminos y condiciones</a>
               <button id="usuario" type="button" class="btn btn-lg btn-warning btn-block">ingresar</button>
 

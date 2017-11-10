@@ -1,13 +1,10 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var session = require('express-session');
+var bodyParser = require('body-parser')
 var app = express ();
-// var session = require ('express-session');
-// var cookieParser = require('cookie-parser');
-// var MemcachedStore = require('connect-memcached')(session);
-// var connect = require('connect');
-//
-// app.use(express.cookieParser('your secret here'));
-// app.use(express.session());
+
+app.use(session({secret: 'ssshhhhh'}));
 
 var db = mongoose.connect("mongodb://multiayudavital_web_app1:multiayudavital1@ds111535.mlab.com:11535/multiayudavital",
   {useMongoClient: true,}
@@ -127,39 +124,50 @@ app.get('/usuarioWeb', function (req, res) {
     });
 })
 
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.post('/loguearse', function (req, res) {
 
-app.get('/loguearse', function (req, res) {
+        var correo = req.body.correo;
+        var contrasena = req.body.contrasena;
 
-        var correo = req.query.correo;
-        var contrasena = req.query.contrasena;
         console.log(correo);
         console.log(contrasena);
 
-        var callback = function (err, usuario) {
-            if (err) return handleError(err);
-            console.log('%s !!!!!!.', usuario.nombre)
+        if(correo && contrasena){
+            var callback = function (err, usuario) {
+                if (err) return handleError(err);
+                console.log('%s !!!!!!.', usuario.nombre)
 
-            if(usuario.nombre){
-                req.session.usuario.push(usuario);
-                var sessData = req.session;
-                sessData.usuario = usuario;
+                if(usuario.nombre){
+                    req.session.usuario = usuario;
+                    var sessData = req.session;
+                    sessData.usuario = usuario;
 
-                res.sendfile(html_dir + 'exito.html');
-            }
+                    res.sendfile(html_dir + 'exito.html');
 
-        };
+                    console.log('Nombre!!!!!'+sessData.usuario.nombre);
+                }
 
-        usuarioModel.findOne({ 'correo': correo, 'contrasena': contrasena}, callback);
+            };
+
+            usuarioModel.findOne({ 'correo': correo, 'contrasena': contrasena}, callback);
+        }else{
+            res.sendfile(html_dir + 'login.html');
+        }
 
 
-         usuarioModel.find(function (err, records) {
-            if (err) {
-                return console.error(err);
-            }
-             console.log(records)
-            res.send(records);
-        });
 })
+
+app.get('/otro', function (req, res) {
+    console.log('Nombre!!!!!'+req.session.usuario.nombre);
+})
+
+app.get('/logout', function (req, res) {
+    var sessData = req.session;
+    sessData.usuario = null;
+})
+
 
 var port = process.env.PORT || 3000;
 

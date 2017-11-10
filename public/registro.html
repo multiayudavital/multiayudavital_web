@@ -10,43 +10,50 @@
 
         $(document).ready(function () {
 
-            navigator.geolocation.getCurrentPosition(success, error, options);
+            //var servidor = 'http://localhost:3000'
+            var servidor = 'https://multiayudavital.herokuapp.com'
 
-            var options = {
-                enableHighAccuracy: true,
-                timeout: 30000,
-                maximumAge: 0
-            };
+            var url = `${servidor}/registrarUsuario`;
 
-            var ubicacion = '';
-            var tipo_emergencia = '';
-
-            //var url = 'https://multiayudavital.herokuapp.com/usuarioMobil?';
-            var url = 'http://localhost:3000/usuarioMobil?';
-
-            $("#gravisima").click(function () {
-                tipo_emergencia = 'tipo_emergencia=gravisima';
+            $("#registrarBtn").click(function () {
                 submit();
             });
 
 
+            function submit() {
+                var nombre = $("#nombre").val();
+                var correo = $("#correo").val();
+                var contrasena = $("#contrasena").val();
+                var terminos = $("#terminos").val();
+                var identificacion = $("#identificacion").val();
 
-            function submit(){
-                if($("#usuario").val() == ''){
-                    $('#usiarioModal').modal('show');
-                }else{
-                    var usuario =$("#usuario").val();
+                if ($("#nombre").val() == '' || $("#correo").val() == '' || $("#contrasena").val() == '') {
+                    $('#usuarioModal').modal('show');
+                } else {
 
-                    url = `${url}&usuario=${usuario}&${tipo_emergencia}&${ubicacion}`;
-                    console.log(url);
-                    $("#tmp").attr("action",url);
-                    $("#tmp").submit();
-                    $('#myModal').modal('show');
+                    $.ajax({
+                        method: "POST",
+                        url: url,
+                        data: {
+                            nombre: nombre,
+                            correo: correo,
+                            contrasena: contrasena,
+                            terminos: terminos,
+                            identificacion: identificacion
+                        }
+                    }).done(function (msg) {
+                        //alert( "Data Saved: " + JSON.stringify(msg) );
+                        if(msg.error){
+                            $('#usuarioModalError').modal('show');
+                        }else{
+                            window.open(`${servidor}/exitoRegistro.html`,"_self")
+                        }
+                    });
                 }
-
-
             }
-        });
+
+        })
+        ;
 
     </script>
     <style type="text/css">
@@ -108,33 +115,23 @@
     <form id="formUsuario">
         <div class="container">
 
-                <div class="form-group"><label for="formBasicText" class="control-label">Nombre
-                    completo</label><input id="usuario" type="text" placeholder="ingrese nombre" id="formBasicText"
-                       class="form-control"></div>
-               <div class="form-group"><label for="formBasicText" class="control-label">identificacion
-               </label><input id="usuario" type="text" placeholder="ingrese identificacion" id="formBasicText"
-                                          class="form-control"></div>
-                  <div class="form-group"><label for="formBasicText" class="control-label">correo
-                  </label><input id="usuario" type="text" placeholder="ingrese correo" id="formBasicText"
-                                             class="form-control"></div>
-                   <div class="form-group"><label for="formBasicText" class="control-label">contaseña
-                   </label><input id="usuario" type="password" placeholder="ingrese contraseña" id="formBasicText"
-                                              class="form-control"></div>
+            <div class="form-group"><label for="formBasicText" class="control-label">Nombre
+                Completo *</label><input id="nombre" type="text" placeholder="ingrese nombre" id="formBasicText"
+                                         class="form-control"></div>
+            <div class="form-group"><label for="formBasicText" class="control-label">Identificacion *
+            </label><input id="identificacion" type="text" placeholder="ingrese identificacion" id="formBasicText"
+                           class="form-control"></div>
+            <div class="form-group"><label for="formBasicText" class="control-label">Correo *
+            </label><input id="correo" type="text" placeholder="ingrese correo" id="formBasicText"
+                           class="form-control"></div>
+            <div class="form-group"><label for="formBasicText" class="control-label">contaseña *
+            </label><input id="contrasena" type="password" placeholder="ingrese contraseña" id="formBasicText"
+                           class="form-control"></div>
 
-                    <div class="form-group col-md-6">
-                        <label for="inputState">Role</label>
-                        <select id="inputState" class="form-control">
-                            <option selected>Seleccione...</option>
-                            <option value="admin">Admin</option>
-                            <option value="usuario">Usuario</option>
-                            <option value="para">Paramedico</option>
-                            <option>...</option>
-                        </select>
-                    </div>
-                  <input type="checkbox" name="terminosCondiciones">acepto terminos y condiciones</input>
+            <input id="terminos" type="checkbox" name="terminosCondiciones">Acepto terminos y condiciones</input>
 
-                <a onclick="window.location = 'login.html'" target="_blank" href="terminos.html">terminos y condiciones</a>
-              <button id="usuario" type="button" class="btn btn-lg btn-warning btn-block">ingresar</button>
+            <a onclick="window.location='login.html'" target="_blank" href="terminos.html">terminos y condiciones</a>
+            <button id="registrarBtn" type="button" class="btn btn-lg btn-warning btn-block">ingresar</button>
 
         </div>
     </form>
@@ -158,7 +155,8 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="usiarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="usiarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -168,7 +166,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                Favor ingresar nombre Paciente
+                Favor ingresar los datos del formulario marcados con *
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" data-dismiss="modal" aria-label="Close">OK</button>

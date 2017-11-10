@@ -1,8 +1,12 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var session = require('express-session');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var bluebird = require('bluebird');
 var app = express ();
+
+// use bluebird as default promise library
+mongoose.Promise = bluebird;
 
 app.use(session({secret: 'ssshhhhh'}));
 
@@ -87,20 +91,21 @@ app.post('/usuarioMobil', function (req, res) {
 
 })
 
-app.post('/registroUsuario', function (req, res) {
-  console.log('Este es el nombre de usuario: ' + req.query.nombre);
-  console.log('Este es la identificacion: ' + req.query.identificacion);
-  console.log('Este es el correo : ' + req.query.correo);
-  console.log('Esta es la contrasena : ' + req.query.contrasena);
-  console.log('acepto terminos: ' + req.query.terminos);
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.post('/registrarUsuario', function (req, res) {
+  console.log('Este es el nombre de usuario: ' + req.body.nombre);
+  console.log('Este es la identificacion: ' + req.body.identificacion);
+  console.log('Este es el correo : ' + req.body.correo);
+  console.log('Esta es la contrasena : ' + req.body.contrasena);
+  console.log('acepto terminos: ' + req.body.terminos);
 
 
-  var nombre = req.query.nombre;
-  var usuario = req.query.identificacion;
-  var correo = req.query.correo;
-  var contrasena = req.query.contrasena;
-  var terminos = req.query.terminos;
-
+  var nombre = req.body.nombre;
+  var usuario = req.body.identificacion;
+  var correo = req.body.correo;
+  var contrasena = req.body.contrasena;
+  var terminos = req.body.terminos;
 
 
   var datosAInsertar = new usuarioModel({
@@ -111,16 +116,22 @@ app.post('/registroUsuario', function (req, res) {
       contrasena : contrasena
   });
 
-  datosAInsertar.save();
-    res.sendfile(html_dir + 'exito.html');
+    var error = ";"
+
+    datosAInsertar.save(function (err) {
+        if (err) {
+            error = {"error":"Usuario no existe"};
+        }else{
+            error = {"msg":"exito"};
+        }
+    });
+
+    res.send(error);
 
 })
 
 app.get('/usuarioWeb', function (req, res) {
     usuariosEmergenciasModel.find(function (err, records) {
-        if (err) {
-            return console.error(err);
-        }
         res.send(records);
     });
 })
@@ -137,10 +148,14 @@ app.post('/loguearse', function (req, res) {
 
         if(correo && contrasena){
             var callback = function (err, usuario) {
-                if (err) return handleError(err);
-                console.log('%s !!!!!!.', usuario.nombre)
+                if (err || usuario == null) {
+                    res.send({"error":"Usuario no existe"});
+                    return;
+                };
 
                 if(usuario.nombre){
+                    console.log('%s !!!!!!.', usuario.nombre)
+
                     req.session.usuario = usuario;
                     var sessData = req.session;
                     sessData.usuario = usuario;

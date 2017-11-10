@@ -31,9 +31,9 @@
                         url: url,
                         data: { correo: correo, contrasena: contrasena }
                     }).done(function( msg ) {
-
-                        alert( "Data Saved: " + JSON.stringify(msg) );
+                        //alert( "Data Saved: " + JSON.stringify(msg) );
                         if(msg.error){
+                            $('#usuarioModalError').modal('show');
                         }else{
                             window.open(`${servidor}/usuarioMobil.html`,"_self")
                         }
@@ -146,6 +146,26 @@
             </div>
             <div class="modal-body">
                 Favor ingresar correo y constraseña
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="usuarioModalError" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ingrese Nombre Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Correo y constraseña invalidos
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" data-dismiss="modal" aria-label="Close">OK</button>

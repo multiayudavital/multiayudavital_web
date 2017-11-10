@@ -7,23 +7,35 @@ var db = mongoose.connect("mongodb://multiayudavital_web_app1:multiayudavital1@d
 );
 db.on('error', console.error.bind(console, 'connection error:'));
 var usuariosEmergenciasSchema = mongoose.Schema({
-	fecha: String,
-    usuario: String,
-	tipo_emergencia: String,
-	ubicacion: { longitude: String, latitude: String, accuracy: String }
+  fecha: String,
+  usuario: String,
+  tipo_emergencia: String,
+  ubicacion: { longitude: String, latitude: String, accuracy: String }
 });
 var usuariosEmergenciasModel = mongoose.model('Usuarios_Emergencias',usuariosEmergenciasSchema);
 
+
+var usuario = mongoose.Schema({
+  fecha: String,
+  usuario: String,
+  tipo_emergencia: String,
+  ubicacion: { longitude: String, latitude: String, accuracy: String }
+});
+var usuariosEmergenciasModel = mongoose.model('Usuarios_Emergencias',usuariosEmergenciasSchema);
+
+
+
+
 var exports = module.exports = {};
 
-app.get('/', function (req, res) {
-  res.send('Hola Mundo')
-})
+
 
 // make express look in the public directory for assets (css/js/img)
 app.use(express.static(__dirname + '/public'));
 var html_dir = './public/';
-
+app.get('/', function (req, res) {
+  res.render('login');
+})
 // set the home page route
 app.get('/index', function(req, res) {
 
@@ -52,6 +64,33 @@ app.post('/usuarioMobil', function (req, res) {
   }else {
       ubicacion = null;
   }
+
+  var datosAInsertar = new usuariosEmergenciasModel({
+	  fecha: fecha,
+      usuario: usuario,
+	  tipo_emergencia: tipo_emergencia,
+	  ubicacion: ubicacion
+  });
+  datosAInsertar.save();
+    res.sendfile(html_dir + 'exito.html');
+
+})
+
+app.post('/registroUsuario', function (req, res) {
+  console.log('Este es el nombre de usuario: ' + req.query.nombre);
+  console.log('Este es la identificacion: ' + req.query.identificacion);
+  console.log('Este es el correo : ' + req.query.correo);
+  console.log('Esta es la contraseña : ' + req.query.contraseña);
+  console.log('acepto terminos: ' + req.query.terminos);
+
+
+  var nombre = req.query.nombre;
+  var usuario = req.query.identificacion;
+  var correo = req.query.correo;
+  var contraseña = req.query.contraseña;
+  var terminos = req.query.terminos;
+
+
 
   var datosAInsertar = new usuariosEmergenciasModel({
 	  fecha: fecha,

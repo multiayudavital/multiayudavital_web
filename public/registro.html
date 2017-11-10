@@ -1,0 +1,170 @@
+<head>
+    <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+    <title>SISTEMA DE EMERGENCIAS MULTIAYUDA-VITAL</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/bootstrap-grid.min.css" rel="stylesheet"/>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            navigator.geolocation.getCurrentPosition(success, error, options);
+
+            var options = {
+                enableHighAccuracy: true,
+                timeout: 30000,
+                maximumAge: 0
+            };
+
+            var ubicacion = '';
+            var tipo_emergencia = '';
+
+            var url = 'https://multiayudavital.herokuapp.com/usuarioMobil?';
+            //var url = 'http://localhost:3000/usuarioMobil?';
+
+            $("#gravisima").click(function () {
+                tipo_emergencia = 'tipo_emergencia=gravisima';
+                submit();
+            });
+
+
+
+            function submit(){
+                if($("#usuario").val() == ''){
+                    $('#usiarioModal').modal('show');
+                }else{
+                    var usuario =$("#usuario").val();
+
+                    url = `${url}&usuario=${usuario}&${tipo_emergencia}&${ubicacion}`;
+                    console.log(url);
+                    $("#tmp").attr("action",url);
+                    $("#tmp").submit();
+                    $('#myModal').modal('show');
+                }
+
+
+            }
+        });
+
+    </script>
+    <style type="text/css">
+
+        .fsTvTG {
+            background-color: #222;
+            height: 150px;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .well {
+            min-height: 20px;
+            padding: 19px;
+            margin-bottom: 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+        }
+
+        #uno {
+            border: 1px solid #FF8000;
+            width: 49.5%;
+            height: 80.5%;
+            display: inline-block;
+        }
+
+        #dos {
+            border: 1px solid #FE2E2E;
+            width: 49.5%;
+            height: 80.5%;
+            display: inline-block;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        .fsTvTG .redux-logo {
+            -webkit-animation: iVXCSc infinite 20s linear;
+            animation: iVXCSc infinite 20s linear;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+<div class="fsTvTG">
+    <img src="logo.5ae1af16.svg" class="redux-logo" alt="logo">
+    <h2>SISTEMA DE EMERGENCIAS MULTIAYUDA-VITAL</h2>
+</div>
+<BR/>
+<div class="well" style="max-width: 400px; margin: 0px auto 10px;">
+    <form id="tmp" method="post"></form>
+    <form id="formUsuario">
+        <div class="container">
+
+                <div class="form-group"><label for="formBasicText" class="control-label">Nombre
+                    completo</label><input id="usuario" type="text" placeholder="ingrese nombre" id="formBasicText"
+                       class="form-control"></div>
+               <div class="form-group"><label for="formBasicText" class="control-label">identificacion
+               </label><input id="usuario" type="text" placeholder="ingrese identificacion" id="formBasicText"
+                                          class="form-control"></div>
+                  <div class="form-group"><label for="formBasicText" class="control-label">correo
+                  </label><input id="usuario" type="text" placeholder="ingrese correo" id="formBasicText"
+                                             class="form-control"></div>
+                   <div class="form-group"><label for="formBasicText" class="control-label">contaseña
+                   </label><input id="usuario" type="text" placeholder="ingrese contraseña" id="formBasicText"
+                                              class="form-control"></div>
+                  <input type="checkbox" name="terminosCondiciones">acepto terminos y condiciones</input>
+                <a onclick="window.location = 'login.html'" target="_blank" href="terminos.html">terminos y condiciones</a>
+                <a href="javascript:if (confirm('desea enviar su emergencia?'))
+    {parent.location='http://norfipc.com/index.html';};"><button id="usuario" type="button" class="btn btn-lg btn-warning btn-block">ingresar</button></a>
+
+        </div>
+    </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Servidor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Enviando datos.....
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="usiarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ingrese Nombre Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Favor ingresar nombre Paciente
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

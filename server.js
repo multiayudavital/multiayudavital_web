@@ -16,14 +16,14 @@ var usuariosEmergenciasModel = mongoose.model('Usuarios_Emergencias',usuariosEme
 
 var exports = module.exports = {};
 
-app.get('/', function (req, res) {
-  res.send('Hola Mundo')
-})
+
 
 // make express look in the public directory for assets (css/js/img)
 app.use(express.static(__dirname + '/public'));
 var html_dir = './public/';
-
+app.get('/', function (req, res) {
+  res.render('login');
+})
 // set the home page route
 app.get('/index', function(req, res) {
 

@@ -1,6 +1,13 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var app = express ();
+// var session = require ('express-session');
+// var cookieParser = require('cookie-parser');
+// var MemcachedStore = require('connect-memcached')(session);
+// var connect = require('connect');
+//
+// app.use(express.cookieParser('your secret here'));
+// app.use(express.session());
 
 var db = mongoose.connect("mongodb://multiayudavital_web_app1:multiayudavital1@ds111535.mlab.com:11535/multiayudavital",
   {useMongoClient: true,}
@@ -18,12 +25,11 @@ var usuariosEmergenciasModel = mongoose.model('Usuarios_Emergencias',usuariosEme
 
 var usuarioSchema = mongoose.Schema({
     nombre: String,
-    usuario: String,
     correo: String,
     terminos: String,
     contrasena : String
 });
-var usuarioModel = mongoose.model('usaurio',usuarioSchema);
+var usuarioModel = mongoose.model('usuarios',usuarioSchema);
 
 var exports = module.exports = {};
 
@@ -49,12 +55,19 @@ app.get('/emergencias', function(req, res) {
     res.render('emergencias');
 })
 
+app.get('/usuarioMobil', function(req, res) {
+
+    res.sendfile(html_dir + 'usuarioMobil.html');
+})
+
 app.post('/usuarioMobil', function (req, res) {
   console.log('Este es el nombre de usuario: ' + req.query.usuario);
   console.log('Este es el tipo de emergencia: ' + req.query.tipo_emergencia);
   console.log('Esta es la ubicacion: ' + req.query.ubicacion);
 
-  var fecha = Date.now();
+  var fecha = new Date().toISOString().
+  replace(/T/, ' ').      // replace T with a space
+  replace(/\..+/, '');
   var usuario = req.query.usuario;
   var tipo_emergencia = req.query.tipo_emergencia;
   var ubicacion = req.query.ubicacion;
@@ -99,6 +112,7 @@ app.post('/registroUsuario', function (req, res) {
       terminos: terminos,
       contrasena : contrasena
   });
+
   datosAInsertar.save();
     res.sendfile(html_dir + 'exito.html');
 
@@ -117,18 +131,34 @@ app.get('/usuarioWeb', function (req, res) {
 app.get('/loguearse', function (req, res) {
 
         var correo = req.query.correo;
-        var clave = req.query.clave;
+        var contrasena = req.query.contrasena;
+        console.log(correo);
+        console.log(contrasena);
 
-        var query = usuariosEmergenciasModel.findOne({ 'correo': correo, 'clave': clave});
-
-// selecting the `name` and `occupation` fields
-        query.select('nombre');
-
-// execute the query at a later time
-        query.exec(function (err, usuario) {
+        var callback = function (err, usuario) {
             if (err) return handleError(err);
-            console.log('%s %s is a %s.', person.name.first, person.name.last, person.occupation) // Space Ghost is a talk show host.
-        })
+            console.log('%s !!!!!!.', usuario.nombre)
+
+            if(usuario.nombre){
+                req.session.usuario.push(usuario);
+                var sessData = req.session;
+                sessData.usuario = usuario;
+
+                res.sendfile(html_dir + 'exito.html');
+            }
+
+        };
+
+        usuarioModel.findOne({ 'correo': correo, 'contrasena': contrasena}, callback);
+
+
+         usuarioModel.find(function (err, records) {
+            if (err) {
+                return console.error(err);
+            }
+             console.log(records)
+            res.send(records);
+        });
 })
 
 var port = process.env.PORT || 3000;

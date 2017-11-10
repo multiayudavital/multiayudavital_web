@@ -144,9 +144,11 @@ app.post('/loguearse', function (req, res) {
                     var sessData = req.session;
                     sessData.usuario = usuario;
 
-                    res.sendfile(html_dir + 'exito.html');
+                    res.send(usuario);
 
                     console.log('Nombre!!!!!'+sessData.usuario.nombre);
+                }else{
+                    res.send({"error":"Usuario no existe"});
                 }
 
             };

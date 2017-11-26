@@ -135,6 +135,50 @@ app.post('/registrarUsuario', function (req, res) {
 
 })
 
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.post('/registrarUsuario2', function (req, res) {
+    console.log('Este es el nombre de usuario: ' + req.body.nombre);
+    console.log('Este es la identificacion: ' + req.body.identificacion);
+    console.log('Este es el correo : ' + req.body.correo);
+    console.log('Esta es la contrasena : ' + req.body.contrasena);
+    console.log('acepto terminos: ' + req.body.terminos);
+    console.log('acepto terminos: ' + req.body.msg);
+
+
+    var nombre = req.body.nombre;
+    var usuario = req.body.identificacion;
+    var correo = req.body.correo;
+    var contrasena = req.body.contrasena;
+    var terminos = req.body.terminos;
+    var msg = req.body.msg;
+
+
+    var datosAInsertar = new usuarioModel({
+        nombre: nombre,
+        usuario: usuario,
+        correo: correo,
+        terminos: terminos,
+        contrasena : encrypt(contrasena),
+        msg : msg
+    });
+
+    var error = ";"
+
+    datosAInsertar.save(function (err) {
+        if (err) {
+            error = {"error":"Usuario no existe"};
+        }else{
+            error = {"msg":"exito"};
+        }
+    });
+
+    res.send(error);
+
+})
+
+
 app.get('/usuarioWeb', function (req, res) {
     usuariosEmergenciasModel.find(function (err, records) {
         res.send(records);

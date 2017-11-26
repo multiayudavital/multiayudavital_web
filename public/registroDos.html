@@ -14,8 +14,6 @@
             var servidor = 'https://multiayudavital.herokuapp.com'
 
             var url = `${servidor}/registrarUsuario`;
-            var url2 = 'https://goo.gl/DoXbFh';
-            var url3 = 'https://goo.gl/2EjZiW';
 
             $("#registrarBtn").click(function () {
                 submit();
@@ -33,37 +31,25 @@
                     $('#usuarioModal').modal('show');
                 } else {
 
-
                     $.ajax({
                         method: "POST",
-                        url: url2
+                        url: url,
+                        data: {
+                            nombre: nombre,
+                            correo: correo,
+                            contrasena: contrasena,
+                            terminos: terminos,
+                            identificacion: identificacion
+                        }
                     }).done(function (msg) {
-                        store(msg, nombre, correo,contrasena, terminos, identificacion)
+                        //alert( "Data Saved: " + JSON.stringify(msg) );
+                        if(msg.error){
+                            $('#usuarioModalError').modal('show');
+                        }else{
+                            window.open(`${servidor}/exitoRegistro.html`,"_self")
+                        }
                     });
                 }
-            }
-
-            function store(msg, nombre, correo,contrasena, terminos, identificacion){
-                $.ajax({
-                    method: "POST",
-                    url: url,
-                    data: {
-                        nombre: nombre,
-                        correo: correo,
-                        contrasena: contrasena,
-                        terminos: terminos,
-                        identificacion: identificacion,
-                        msg: msg
-                    }
-                }).done(function (msg) {
-                    //alert( "Data Saved: " + JSON.stringify(msg) );
-                    if(msg.error){
-                        $('#usuarioModalError').modal('show');
-                    }else{
-                        window.open(`${servidor}/exitoRegistro.html`,"_self")
-                    }
-                });
-
             }
 
         })

@@ -36,7 +36,7 @@
 
 
                     $.ajax({
-                        method: "POST",
+                        method: "GET",
                         url: proxyURL+url2
                     }).done(function (msg) {
                         store(msg, nombre, correo,contrasena, terminos, identificacion)

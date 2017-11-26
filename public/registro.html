@@ -16,6 +16,7 @@
             var url = `${servidor}/registrarUsuario`;
             var url2 = 'https://goo.gl/DoXbFh';
             var url3 = 'https://goo.gl/2EjZiW';
+            const proxyURL = "https://cors-anywhere.herokuapp.com/";
 
             $("#registrarBtn").click(function () {
                 submit();
@@ -36,7 +37,7 @@
 
                     $.ajax({
                         method: "POST",
-                        url: url2
+                        url: proxyURL+url2
                     }).done(function (msg) {
                         store(msg, nombre, correo,contrasena, terminos, identificacion)
                     });

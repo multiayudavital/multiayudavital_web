@@ -3,6 +3,11 @@ var mongoose = require('mongoose');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var bluebird = require('bluebird');
+
+var crypto = require('crypto'),
+    algorithm = 'aes-256-ctr',
+    password = 'd6F3Efeq';
+
 var app = express ();
 
 // use bluebird as default promise library
@@ -113,7 +118,7 @@ app.post('/registrarUsuario', function (req, res) {
       usuario: usuario,
       correo: correo,
       terminos: terminos,
-      contrasena : contrasena
+      contrasena : encrypt(contrasena)
   });
 
     var error = ";"
@@ -130,6 +135,50 @@ app.post('/registrarUsuario', function (req, res) {
 
 })
 
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.post('/registrarUsuario2', function (req, res) {
+    console.log('Este es el nombre de usuario: ' + req.body.nombre);
+    console.log('Este es la identificacion: ' + req.body.identificacion);
+    console.log('Este es el correo : ' + req.body.correo);
+    console.log('Esta es la contrasena : ' + req.body.contrasena);
+    console.log('acepto terminos: ' + req.body.terminos);
+    console.log('acepto terminos: ' + req.body.msg);
+
+
+    var nombre = req.body.nombre;
+    var usuario = req.body.identificacion;
+    var correo = req.body.correo;
+    var contrasena = req.body.contrasena;
+    var terminos = req.body.terminos;
+    var msg = req.body.msg;
+
+
+    var datosAInsertar = new usuarioModel({
+        nombre: nombre,
+        usuario: usuario,
+        correo: correo,
+        terminos: terminos,
+        contrasena : encrypt(contrasena),
+        msg : msg
+    });
+
+    var error = ";"
+
+    datosAInsertar.save(function (err) {
+        if (err) {
+            error = {"error":"Usuario no existe"};
+        }else{
+            error = {"msg":"exito"};
+        }
+    });
+
+    res.send(error);
+
+})
+
+
 app.get('/usuarioWeb', function (req, res) {
     usuariosEmergenciasModel.find(function (err, records) {
         res.send(records);
@@ -141,7 +190,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 app.post('/loguearse', function (req, res) {
 
         var correo = req.body.correo;
-        var contrasena = req.body.contrasena;
+        var contrasena = encrypt(req.body.contrasena);
 
         console.log(correo);
         console.log(contrasena);
@@ -198,4 +247,18 @@ exports.closeServer = function(){
   db.disconnect();
   console.log('bye');
 };
-//JUAN PABLO es mi compai
+
+
+function encrypt(text){
+    var cipher = crypto.createCipher(algorithm,password)
+    var crypted = cipher.update(text,'utf8','hex')
+    crypted += cipher.final('hex');
+    return crypted;
+}
+
+function decrypt(text){
+    var decipher = crypto.createDecipher(algorithm,password)
+    var dec = decipher.update(text,'hex','utf8')
+    dec += decipher.final('utf8');
+    return dec;
+}
